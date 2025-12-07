@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Galeria Mojego Kota</title>
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
+
+body {
+  font-family: 'Roboto', sans-serif;
+  background: radial-gradient(circle at top, #1a0000, #000000);
+  color: #fff;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  min-height:100vh;
+  margin:0;
+  overflow-x:hidden;
+}
+
+h1 {
+  text-align:center;
+  font-size:3rem;
+  margin:40px 0;
+  color:#ff4500;
+  text-shadow: 0 0 5px #ff4500, 0 0 10px #ff6347; 
+  animation: glow 2s infinite alternate;
+}
+
+@keyframes glow {
+  0% { text-shadow: 0 0 5px #ff4500, 0 0 10px #ff6347; }
+  100% { text-shadow: 0 0 10px #ff0000, 0 0 20px #ff4500; }
+}
+
+.gif-container {
+  position: relative;
+  width: 400px;
+  height: 300px;
+  margin: 0 auto 20px;
+}
+
+.gif-img {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border-radius: 25px;
+  box-shadow: 0 0 20px #ff4500, 0 0 40px #ff0000;
+  cursor: pointer;
+  border: 5px solid #000;
+  object-fit: cover;
+}
+
+#defaultGif {
+  animation: pulse 3s infinite alternate;
+}
+
+#hoverGif {
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+@keyframes pulse {
+  0% { transform: scale(1); box-shadow: 0 0 20px #ff4500, 0 0 40px #ff0000; }
+  100% { transform: scale(1.05); box-shadow: 0 0 30px #ff6347, 0 0 50px #ff0000; }
+}
+
+.description {
+  max-width: 700px;
+  text-align: center;
+  font-size: 1.2rem;
+  line-height: 1.6;
+  margin-bottom: 40px;
+  color: #ffb199;
+  text-shadow: 0 0 5px #330000;
+  margin-top: 40px;
+}
+
+.description a {
+  color: #ff0000;
+  font-weight: 700;
+  text-decoration: none;
+  text-shadow: 0 0 2px #ff4500, 0 0 4px #ff0000;
+  transition: color 0.3s ease, text-shadow 0.3s ease;
+}
+
+.description a:hover {
+  color: #ff6347;
+  text-shadow: 0 0 4px #ff0000, 0 0 8px #ff4500;
+}
+
+.gallery {
+  display:grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap:20px; 
+  max-width:1000px;
+  margin-bottom:50px;
+  width:100%;
+  padding:0 20px;
+}
+
+.gallery img {
+  width:100%;
+  height:250px;              
+  border-radius:15px;
+  object-fit:cover;         
+  box-shadow: 0 0 10px #ff4500, 0 0 20px #ff0000; 
+  transition: all 0.3s ease;
+  cursor:pointer;
+  padding:5px;
+}
+
+.gallery img:hover {
+  transform: scale(1.05) rotate(-1deg);
+  box-shadow: 0 0 20px #ff6347, 0 0 40px #ff0000;
+}
+
+footer {
+  width:100%;
+  text-align:center;
+  padding:15px 0;
+  background: #220000;
+  color:#ff6347;
+  box-shadow: 0 -5px 20px #330000;
+  margin-top:auto;  
+  font-weight:700;
+  text-shadow: 0 0 5px #ff0000;
+}
+</style>
+</head>
+<body>
+
+<h1>Kot Maciek</h1>
+
+<div class="gif-container">
+  <img src="images/kot.gif" alt="" class="gif-img" id="defaultGif">
+  <img src="images/kot2.gif" alt="" class="gif-img" id="hoverGif">
+</div>
+
+<p class="description">
+  <a target="_blank" href="https://pl.wikipedia.org/wiki/Kot_domowy">Kot</a> Maciek to prawdziwy król – ciekawski, pełen energii i zawsze gotowy na nowe przygody. Miał bardzo ostry charakter. 
+  Niestety już go z nami nie ma. Powyższe zdjęcie najbardziej zapadło mi w pamięć.
+</p>
+
+<div class="gallery">
+  <img src="images/3.jpg" alt="Kot 1">
+  <img src="images/5.jpg" alt="Kot 2">
+  <img src="images/7.jpg" alt="Kot 3">
+  <img src="images/6.jpg" alt="Kot 4">
+  <img src="images/4.jpg" alt="Kot 5">
+  <img src="images/8.jpg" alt="Kot 6">
+</div>
+
+<footer>
+  &copy; Mateusz Woszczak. Wszystkie prawa zastrzeżone.
+</footer>
+
+<script>
+const preloadImage = new Image();
+preloadImage.src = "images/kot2.gif";
+
+
+preloadImage.onload = function() {
+  const container = document.querySelector('.gif-container');
+  const hoverGif = document.getElementById('hoverGif');
+  
+  container.addEventListener('mouseenter', () => {
+    hoverGif.style.opacity = '1';
+  });
+  
+  container.addEventListener('mouseleave', () => {
+    hoverGif.style.opacity = '0';
+  });
+  
+  
+  hoverGif.addEventListener('mouseenter', () => {
+    hoverGif.style.opacity = '1';
+  });
+};
+</script>
+
+</body>
+</html>

@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Wypożyczalnia Samochodów</title>
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+<style>
+* { 
+  margin:0; 
+  padding:0; 
+  box-sizing:border-box; 
+}
+
+body {
+  font-family: 'Roboto', sans-serif;
+  background: linear-gradient(135deg, #4e54c8, #8f94fb);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+  color: #fff;
+  overflow-x: hidden;
+}
+
+.container {
+  background: rgba(255,255,255,0.05);
+  padding:30px 25px;
+  border-radius:15px;
+  max-width:950px;
+  width:90%;
+  margin: 20px auto;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+}
+
+h1 {
+  text-align:center;
+  margin-bottom:25px;
+  font-size:2.5rem;
+  text-shadow: 2px 2px 8px rgba(0,0,0,0.5);
+}
+
+.controls {
+  display:flex;
+  justify-content: space-between;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+  gap:10px;
+}
+
+.controls select, .controls input {
+  padding:6px 10px;
+  border-radius:6px;
+  border:none;
+  font-size:1rem;
+}
+
+.car {
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding:12px 10px;
+  margin-bottom:12px;
+  border-radius:10px;
+  background: rgba(255,255,255,0.1);
+  transition: all 0.3s ease;
+}
+
+.car:hover {
+  background: rgba(255,255,255,0.15);
+}
+
+.car img {
+  width:220px;
+  height:140px;
+  border-radius:8px;
+  object-fit:cover;
+  margin-right:15px;
+  cursor:pointer;
+}
+
+.car-info {
+  flex:1;
+}
+
+.car-info h3 {
+  margin-bottom:5px;
+  font-size:1.3rem;
+  text-shadow:1px 1px 3px rgba(0,0,0,0.4);
+  cursor:pointer;
+  color: #fff;
+  text-decoration: underline;
+}
+
+.car-info p {
+  margin-bottom:5px;
+  font-size:1rem;
+  color:#e0e0e0;
+}
+
+.car input {
+  padding:6px 8px;
+  border-radius:6px;
+  border:none;
+  outline:none;
+  font-size:1rem;
+  margin-right:8px;
+  width:60px;
+}
+
+button {
+  padding:10px 15px;
+  border:none;
+  border-radius:8px;
+  background: linear-gradient(135deg,#6a11cb,#2575fc);
+  color:#fff;
+  font-weight:700;
+  cursor:pointer;
+  transition: all 0.3s ease;
+}
+
+button:hover {
+  transform: scale(1.05);
+  background: linear-gradient(135deg,#2575fc,#6a11cb);
+}
+
+button.reset {
+  background: linear-gradient(135deg,#8c8c8c,#5c5c5c);
+  margin-top:15px;
+}
+
+button.reset:hover {
+  background: linear-gradient(135deg,#5c5c5c,#8c8c8c);
+}
+
+button.remove {
+  background: linear-gradient(135deg,#ff4b4b,#ff0000);
+  margin-left:10px;
+}
+
+button.remove:hover {
+  background: linear-gradient(135deg,#ff0000,#ff4b4b);
+}
+
+.result {
+  margin-top:20px;
+  font-size:1.2rem;
+  text-align:left;
+  white-space: pre-line;
+  text-shadow: 2px 2px 6px rgba(0,0,0,0.5);
+}
+
+footer {
+  width: 100%;
+  text-align: center;
+  padding: 15px 0;
+  font-size: 1rem;
+  color: #fff;
+  background: rgba(0,0,0,0.5);
+  box-shadow: 0 -5px 15px rgba(0,0,0,0.3);
+  margin-top: auto;   /* kluczowe – przykleja stopkę do dołu */
+}
+
+</style>
+</head>
+<body>
+<div class="container">
+<h1>Wypożyczalnia Samochodów</h1>
+
+<div class="controls">
+  <select id="sortSelect">
+    <option value="default">Sortuj po</option>
+    <option value="priceAsc">Cenie rosnąco</option>
+    <option value="priceDesc">Cenie malejąco</option>
+  </select>
+  <label>Maks. cena za dzień: <input type="number" id="maxPrice" min="0" placeholder="0"></label>
+</div>
+
+<div id="carsContainer"></div>
+<button class="reset" onclick="resetAll()">Resetuj</button>
+<div class="result" id="result">Koszyk jest pusty.</div>
+</div>
+
+<footer>
+  &copy; Mateusz Woszczak. Wszystkie prawa zastrzeżone.
+</footer>
+
+<script>
+const cars = [
+  {name:"Toyota Corolla", price:150, img:"images/toyota.jpg", wiki:"https://pl.wikipedia.org/wiki/Toyota_Corolla"},
+  {name:"BMW 3 Series", price:250, img:"images/bmw.jpg", wiki:"https://pl.wikipedia.org/wiki/BMW_serii_3"},
+  {name:"Audi A4", price:300, img:"images/audi.jpg", wiki:"https://pl.wikipedia.org/wiki/Audi_A4"},
+  {name:"Mercedes C-Class", price:350, img:"images/mercedes.jpg", wiki:"https://pl.wikipedia.org/wiki/Mercedes-Benz_Klasa_C"},
+  {name:"Ford Mustang", price:400, img:"images/mustang.jpg", wiki:"https://pl.wikipedia.org/wiki/Ford_Mustang"},
+  {name:"Mazda 6", price:180, img:"images/mazda.jpg", wiki:"https://pl.wikipedia.org/wiki/Mazda_6"},
+  {name:"Volkswagen Golf", price:200, img:"images/volkswagen.jpg", wiki:"https://pl.wikipedia.org/wiki/Volkswagen_Golf"},
+  {name:"Ford Focus", price:170, img:"images/ford.jpg", wiki:"https://pl.wikipedia.org/wiki/Ford_Focus"},
+  {name:"Honda Civic", price:190, img:"images/honda.jpg", wiki:"https://pl.wikipedia.org/wiki/Honda_Civic"},
+  {name:"Nissan Altima", price:210, img:"images/nissan.jpg", wiki:"https://pl.wikipedia.org/wiki/Nissan_Altima"}
+];
+
+let filteredCars = [...cars];
+const cart = [];
+
+const container = document.getElementById("carsContainer");
+const sortSelect = document.getElementById("sortSelect");
+const maxPriceInput = document.getElementById("maxPrice");
+const resultDiv = document.getElementById("result");
+
+function displayCars(){
+  container.innerHTML = "";
+  filteredCars.forEach((car,index)=>{
+    const div = document.createElement("div");
+    div.className = "car";
+    div.innerHTML = `
+      <img src="${car.img}" alt="${car.name}" onclick="window.open('${car.wiki}','_blank')">
+      <div class="car-info">
+        <h3 onclick="window.open('${car.wiki}','_blank')">${car.name}</h3>
+        <p>Cena za dzień: ${car.price} zł</p>
+        <input type="number" id="days${index}" min="1" value="1">
+        <button onclick="addToCart(${index})">Dodaj do koszyka</button>
+      </div>
+    `;
+    container.appendChild(div);
+  });
+}
+
+displayCars();
+
+function addToCart(index){
+  const days = parseInt(document.getElementById(`days${index}`).value);
+  if(isNaN(days) || days<1){
+    alert("Wpisz poprawną liczbę dni!");
+    return;
+  }
+  const car = filteredCars[index];
+  cart.push({name: car.name, price: car.price, days: days});
+  updateCart();
+}
+
+function removeFromCart(i){
+  cart.splice(i,1);
+  updateCart();
+}
+
+function updateCart(){
+  resultDiv.innerHTML = "";
+  if(cart.length === 0){
+    resultDiv.textContent = "Koszyk jest pusty.";
+    return;
+  }
+
+  let total = 0;
+  cart.forEach((item, index) => {
+    total += item.price * item.days;
+    const dayText = item.days === 1 ? "dzień" : "dni";
+
+    const row = document.createElement("div");
+    row.style.display = "flex";
+    row.style.justifyContent = "space-between";
+    row.style.alignItems = "center";
+    row.style.marginBottom = "5px";
+
+    const text = document.createElement("span");
+    text.textContent = `${item.name} na ${item.days} ${dayText} - ${item.price * item.days} zł`;
+
+    const removeBtn = document.createElement("button");
+    removeBtn.textContent = "Usuń";
+    removeBtn.className = "remove";
+    removeBtn.onclick = () => removeFromCart(index);
+
+    row.appendChild(text);
+    row.appendChild(removeBtn);
+    resultDiv.appendChild(row);
+  });
+
+  const totalDiv = document.createElement("div");
+  totalDiv.style.marginTop = "10px";
+  totalDiv.style.fontWeight = "bold";
+  totalDiv.textContent = `Łączna cena: ${total} zł`;
+  resultDiv.appendChild(totalDiv);
+}
+
+function resetAll(){
+  filteredCars.forEach((_,index)=>{
+    document.getElementById(`days${index}`).value = 1;
+  });
+  cart.length = 0;
+  updateCart();
+}
+
+// Sortowanie
+sortSelect.addEventListener("change", ()=>{
+  if(sortSelect.value === "priceAsc"){
+    filteredCars.sort((a,b)=>a.price-b.price);
+  } else if(sortSelect.value === "priceDesc"){
+    filteredCars.sort((a,b)=>b.price-a.price);
+  } else {
+    filteredCars = [...cars];
+  }
+  displayCars();
+});
+
+// Filtr po cenie
+maxPriceInput.addEventListener("input", ()=>{
+  const maxPrice = parseInt(maxPriceInput.value);
+  filteredCars = cars.filter(car => isNaN(maxPrice) || car.price <= maxPrice);
+  displayCars();
+});
+</script>
+</body>
+</html>
